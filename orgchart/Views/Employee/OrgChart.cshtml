@@ -1,0 +1,29 @@
+﻿@model   IEnumerable<orgchart.Models.Employee>
+@{
+    ViewBag.Title = "Employee Index";
+}
+
+<div class="jumbotron">
+    <h2>S-Squared Enterprises</h2>
+
+    <h4> Org Chart</h4>
+    @{var emp = Model.FirstOrDefault(x => x.ReportsToID == 0);}
+    <span>@emp.FullName - Role(s)</span>
+    <ul>
+
+        @foreach (var group in Model.Where(x => x.ReportsToID > 2).ToList().GroupBy(x => x.ReportsToID))
+        {
+            {
+                emp = Model.FirstOrDefault(x => x.ID == group.Key);
+            }
+            <li style=""><span>@string.Format("{0} - Role(s): ", emp.FullName)</span></li>
+            <ul>
+                @foreach (var employee in Model.Where(x => x.ReportsToID == group.Key))
+                {
+                    <li><span>@string.Format("{0} - Role(s)", employee.FullName)</span></li>
+                }
+            </ul>
+        }
+    </ul>
+</div>
+

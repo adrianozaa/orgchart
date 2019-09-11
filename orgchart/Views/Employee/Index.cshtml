@@ -1,0 +1,76 @@
+﻿@model orgchart.ViewModels.Employee.EmployeesVM
+
+@{
+    ViewBag.Title = "Employees";
+}
+
+<h2>Employees</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<div class="form-group">
+    <label  class="control-label col-md-2">Department</label>
+    <div class="mcol-md-offset-2 col-md-10">
+        <select class="form-control" id="filterByDepartment" onchange="filterByDepartment()" >
+            <option value="" >All</option>
+
+            @foreach (var department in Model.Departments)
+            {
+                var selected = department.ID == Model.SelectedDepartment ? "selected='selected'" : "";
+                <option value="@department.ID" @selected>@department.Name</option>
+            }
+        </select>
+    </div>
+</div>
+<br/>
+<table class="table">
+    <tr>
+        <th>First Name</th>
+        <th>Middle Name</th>
+        <th>Last Name</th>
+        <th>Reports To</th>
+        <th>Role(s)</th>
+        <th>Deparment</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Employees)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MiddleName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+
+            <td>
+                @(Model.Employees.FirstOrDefault(x => x.ID == item.ID).FullName)
+            </td>
+            <td>
+                @(String.Join(",", Model.Roles.Where(y => Model.EmployeeRoles.Where(x => x.EmployeeID == item.ID).Select(x => x.RoleID).ToList().Contains(y.ID)).Select(y => y.Description)))
+            </td>
+            <td>
+                @Model.Departments.FirstOrDefault(x => x.ID == item.DepartmentID).Name
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @*@Html.ActionLink("Details", "Details", new { id=item.ID }) |*@
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<script>
+function filterByDepartment() {
+    var departmentID = document.getElementById("filterByDepartment").value;
+    window.location.href = "/employee/Index/" + departmentID;
+}
+</script>
